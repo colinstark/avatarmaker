@@ -11,23 +11,66 @@
 			<div class="form">
 				<input id="nameInput" type="text" name="name" value="test" placeholder="enter a name">
 				<input id="tagsInput" type="text" name="tags" value="ambient, test" placeholder="enter tags">
-				<br/>
-				<button id="generateButton">Generate</button>
+				<button id="randomButton">Random</button>
 			</div>
 			<div class="result">
 				<canvas id="canvas" class="canvas-1" width="512" height="512"></canvas>
-				<div id="nameDisplay">Name</div>
-				<button>Download</button>
+				<div id="nameDisplay">X</div>
+				<button id="downloadButton">Download</button>
 			</div>
 		</section>
 	</body>
+	<script src="shapes.js"></script>
+	<script src="configs.js"></script>
 	<script src="main.js"></script>
 	<script>
-		nameInput.value = name;
-		const ctx = canvas.getContext("2d");
+		const ctx = canvas.getContext("2d")
 
-		generateButton.addEventListener("click", () => update(nameInput.value, tagsInput.value))
+		function init() {
+			nameInput.value = getRandomName()
+			tagsInput.value = getRandomTags()
+			nameDisplay.innerHTML = inputs.name
+			generate()
+		}
 
-		update(nameInput.value, tagsInput.value)
+		function generate() {
+			nameDisplay.innerHTML = nameInput.value
+			update(nameInput.value, tagsInput.value)
+		}
+
+		nameInput.addEventListener("change", e => generate() )
+		tagsInput.addEventListener("change", e => generate() )
+		randomButton.addEventListener("click", e => init() )
+
+		downloadButton.addEventListener('click', function(e) {
+			let canvasUrl = canvas.toDataURL("image/jpeg", 0.5);
+			const createEl = document.createElement('a');
+			createEl.href = canvasUrl;
+			createEl.download = `avatar-${inputs.name}`;
+			createEl.click();
+			createEl.remove();
+		});
+
+		function getRandomName() {
+			const names = ["Matt", "Jessica (UK)", "Michael", "Levenshtein", "Naruto", "Igarashi", "Arto", "Vache", "Sasha", "Tatev"]
+			let randomIndex = Math.floor(names.length * Math.random(10))
+			return names[randomIndex]
+		}
+
+		function getRandomTags() {
+			const tags = ["Ambient", "Calm", "Narrative", "News", "Comedy", "Robotic", "Excited", "Audio book"]
+			let amount = Math.floor(3 * Math.random())
+			let results = []
+			for(let i = 0; i <= amount; i++){
+				let randomIndex = Math.floor(tags.length * Math.random(10))
+				results.push(tags[randomIndex])
+			}
+
+			return results.join()
+		}
+
+
+		init()
+
 	</script>
 </html>
