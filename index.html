@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" href="style.css">
+		<title>Test</title>
+	</head>
+	<body>
+		<section class="generator">
+			<div class="form">
+				<input id="nameInput" type="text" name="name" value="test" placeholder="enter a name">
+				<input id="tagsInput" type="text" name="tags" value="ambient, test" placeholder="enter tags">
+				<br/>
+				<button id="generateButton">Generate</button>
+			</div>
+			<div class="result">
+				<canvas id="canvas" class="canvas-1" width="512" height="512"></canvas>
+				<div id="nameDisplay">Name</div>
+				<button>Download</button>
+			</div>
+		</section>
+	</body>
+	<script src="main.js"></script>
+	<script>
+		nameInput.value = name;
+		const ctx = canvas.getContext("2d");
+
+		generateButton.addEventListener("click", () => update(nameInput.value, tagsInput.value))
+
+		update(nameInput.value, tagsInput.value)
+	</script>
+</html>
