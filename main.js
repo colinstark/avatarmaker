@@ -1,3 +1,5 @@
+const noisy = true
+const mode = "overlay"
 let inputs = {
 	name: "NAME",
 	tags: "tag, tag",
@@ -48,17 +50,15 @@ function getSpecificValueOf(arr, hash) {
 }
 
 function paint(ctx) {
-	ctx.globalAlpha = 1;
+	ctx.globalCompositeOperation = mode;
 	ctx.fillStyle = params.color
 	ctx.fillRect(0, 0, ctx.width, ctx.height)
 
+	ctx.globalAlpha = 0.9;
 	ctx.fillStyle = makeGradient(params.color, 0, ctx.height, ctx)
 	ctx.fillRect(0, 0, ctx.width, ctx.height)
-
-	ctx.globalAlpha = 0.1;
-	ctx.fillStyle = params.color
-	ctx.fillRect(0, 0, ctx.width, ctx.height)
 	ctx.globalAlpha = 1;
+	// ctx.globalCompositeOperation = 'normal';
 
 	var svg = new Blob([shape(params.shape, params.colorStrategy, gradientColor)], {
 		type: "image/svg+xml;charset=utf-8"
@@ -76,8 +76,6 @@ function paint(ctx) {
 	img.src = url;
 
 	if (["mirror", "mirror-offset"].includes(params.strategy)) {
-		console.log("its a dual")
-
 		let img2 = new Image();
 		img2.addEventListener('load', e => {
 			let target = getShapeImageParameters(e.target, true)
@@ -88,9 +86,12 @@ function paint(ctx) {
 			ctx.setTransform(1, 0, 0, 1, 0, 0);
 		});
 		img2.src = url;
-
-
 	}
+
+	if (noisy) {
+		makeNoise(ctx)
+	}
+
 
 }
 
@@ -109,14 +110,17 @@ function getShapeImageParameters(target, second = false) {
 			scale = 1.3
 			offsetX = 0.1
 			break;
+
 		case "offset-right":
 			scale = 1.3
 			offsetX = 0.9
 			break;
+
 		case "offset-top":
 			scale = 1.3
 			offsetY = 0.1
 			break;
+
 		case "offset-bottom":
 			scale = 1.3
 			offsetY = 0.9
@@ -156,4 +160,26 @@ function makeGradient(color, to_x, to_y, ctx) {
 	gradient.addColorStop(0, color);
 	gradient.addColorStop(1, "#FFFFFF");
 	return gradient
+}
+
+function makeNoise(ctx, opacity = 0.1) {
+	let alpha = 255 * opacity;
+	let imageData = ctx.getImageData(0, 0, ctx.width, ctx.height)
+	let pixels = imageData.data
+	let n = pixels.length
+	let i = 0;
+	while (i < n) {
+		let fluctuation = (Math.random() - 0.5) * (256 * opacity)
+		pixels[i++] = (pixels[i] + fluctuation)
+		pixels[i++] = (pixels[i] + fluctuation)
+		pixels[i++] = (pixels[i] + fluctuation)
+		pixels[i++] = 255;
+	}
+	// Black and white version
+	// while (i < n) {
+	// 	pixels[i++] = pixels[i++] = pixels[i++] = (Math.random() * 256) | 0;
+	// 	pixels[i++] = alpha;
+	// }
+	ctx.putImageData(imageData, 0, 0);
+	return ctx;
 }
