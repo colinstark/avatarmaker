@@ -28,7 +28,9 @@ const colorStrategies = [
 	"fade",
 	"fade",
 	"fade",
-	"fade-reverse"
+	"fade-reverse",
+	// "out-in-out"
+	// "in-out-in"
 ]
 const shapes = [
 	"blob1",
